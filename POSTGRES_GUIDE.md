@@ -12,7 +12,7 @@ createdb alojamentos
 ./setup_importer.sh
 
 # 3. Import data
-./importer -input aa.geojson
+./importer -input example.geojson
 
 # 4. Query data
 ./query

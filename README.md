@@ -22,7 +22,7 @@ This API provides access to over 118,000 Portuguese accommodation records with a
 
 - **Go 1.20+**
 - **PostgreSQL 12+**
-- Data file: GeoJSON file with accommodation records (e.g., `aa.geojson`)
+- Data file: GeoJSON file with accommodation records (e.g., `example.geojson`)
 
 ## Quick Start
 
@@ -51,7 +51,7 @@ createdb alojamentos
 ./setup_importer.sh
 
 # Import your data (adjust path to your GeoJSON file)
-./importer -input aa.geojson
+./importer -input example.geojson
 ```
 
 For detailed database setup instructions, see:

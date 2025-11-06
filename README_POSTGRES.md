@@ -80,7 +80,7 @@ All accommodation data is stored in a single `alojamentos` table:
 ### Basic Import
 
 ```bash
-./importer -input aa.geojson
+./importer -input example.geojson
 ```
 
 ### Custom Connection
@@ -213,7 +213,7 @@ createdb alojamentos
 
 Options:
   -input string
-        Input GeoJSON file path (default "aa.geojson")
+        Input GeoJSON file path (default "example.geojson")
   -db string
         PostgreSQL connection string
         (default "postgres://localhost/alojamentos?sslmode=disable")
