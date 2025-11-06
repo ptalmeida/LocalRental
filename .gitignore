@@ -1,0 +1,22 @@
+# Binaries
+importer
+query
+pedroAPI
+
+# Databases
+*.db
+*.db-journal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test_*.db
+test_*.json

@@ -1,0 +1,316 @@
+basePath: /
+definitions:
+  models.AlojamentoResponse:
+    properties:
+      codigo_postal:
+        type: string
+      concelho:
+        type: string
+      created_at:
+        type: string
+      data_abertura_publico:
+        type: string
+      data_registo:
+        type: string
+      denominacao:
+        type: string
+      distrito:
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      freguesia:
+        type: string
+      id:
+        type: integer
+      latitude:
+        type: number
+      localidade:
+        type: string
+      longitude:
+        type: number
+      modalidade:
+        type: string
+      nr_rnal:
+        type: integer
+      nr_utentes:
+        type: integer
+    type: object
+  models.DistrictStats:
+    properties:
+      count:
+        type: integer
+      distrito:
+        type: string
+    type: object
+  models.ErrorResponse:
+    properties:
+      details:
+        additionalProperties:
+          type: string
+        type: object
+      error:
+        type: string
+    type: object
+  models.MunicipalityStats:
+    properties:
+      concelho:
+        type: string
+      count:
+        type: integer
+    type: object
+  models.PaginatedResponse-models_AlojamentoResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.AlojamentoResponse'
+        type: array
+      pagination:
+        $ref: '#/definitions/models.PaginationMeta'
+    type: object
+  models.PaginationMeta:
+    properties:
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  models.StatsResponse:
+    properties:
+      average_capacity:
+        type: number
+      by_concelho:
+        items:
+          $ref: '#/definitions/models.MunicipalityStats'
+        type: array
+      by_distrito:
+        items:
+          $ref: '#/definitions/models.DistrictStats'
+        type: array
+      by_modalidade:
+        items:
+          $ref: '#/definitions/models.TypeStats'
+        type: array
+      total_accommodations:
+        type: integer
+    type: object
+  models.TypeStats:
+    properties:
+      count:
+        type: integer
+      modalidade:
+        type: string
+    type: object
+host: localhost:8087
+info:
+  contact:
+    email: support@pedroapi.com
+    name: API Support
+  description: Portuguese accommodations (Alojamentos Locais) data API
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Pedro API
+  version: "1.0"
+paths:
+  /admin:
+    get:
+      description: Access admin area (requires authentication)
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: admin
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BasicAuth: []
+      summary: Admin access
+      tags:
+      - Admin
+  /alojamentos:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of Portuguese accommodations
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 20, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: Sort field (id, nr_rnal, denominacao, concelho, distrito, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: Sort order (asc, desc)
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PaginatedResponse-models_AlojamentoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: List accommodations with pagination
+      tags:
+      - alojamentos
+  /alojamentos/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a single accommodation by its ID
+      parameters:
+      - description: Accommodation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AlojamentoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get accommodation by ID
+      tags:
+      - alojamentos
+  /alojamentos/search:
+    get:
+      consumes:
+      - application/json
+      description: Search accommodations with various filters and pagination
+      parameters:
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 20, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: Sort field (id, nr_rnal, denominacao, concelho, distrito, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: Sort order (asc, desc)
+        in: query
+        name: order
+        type: string
+      - description: Filter by municipality
+        in: query
+        name: concelho
+        type: string
+      - description: Filter by district
+        in: query
+        name: distrito
+        type: string
+      - description: Filter by accommodation type
+        in: query
+        name: modalidade
+        type: string
+      - description: Filter by owner email
+        in: query
+        name: email
+        type: string
+      - description: Minimum capacity
+        in: query
+        name: min_capacity
+        type: integer
+      - description: Maximum capacity
+        in: query
+        name: max_capacity
+        type: integer
+      - description: Minimum latitude
+        in: query
+        name: min_lat
+        type: number
+      - description: Maximum latitude
+        in: query
+        name: max_lat
+        type: number
+      - description: Minimum longitude
+        in: query
+        name: min_lng
+        type: number
+      - description: Maximum longitude
+        in: query
+        name: max_lng
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PaginatedResponse-models_AlojamentoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Search accommodations with filters
+      tags:
+      - alojamentos
+  /alojamentos/stats:
+    get:
+      consumes:
+      - application/json
+      description: Get aggregated statistics about accommodations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Get accommodation statistics
+      tags:
+      - alojamentos
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
