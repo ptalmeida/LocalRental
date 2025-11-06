@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"pedroAPI/models"
+	"localRental/models"
 )
 
 // RespondWithJSON sends a JSON response with the given status code

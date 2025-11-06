@@ -4,7 +4,7 @@
       "Bash(go get:*)",
       "Bash(mkdir:*)",
       "Bash(go build:*)",
-      "Bash(./pedroAPI)",
+      "Bash(./localRental)",
       "Bash(curl:*)",
       "Bash(lsof:*)",
       "Bash(xargs kill -9)",

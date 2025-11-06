@@ -1,6 +1,9 @@
 # Binaries
+importer
+!importer/
 query
-pedroAPI
+!query/
+localRental
 
 # Databases
 *.db

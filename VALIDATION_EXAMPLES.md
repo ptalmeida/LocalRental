@@ -5,7 +5,7 @@ This guide shows how to add new endpoints with validation to your API.
 ## Project Structure
 
 ```
-pedroAPI/
+localRental/
 ├── models/              # Request/response structs with validation tags
 │   ├── requests.go
 │   └── responses.go

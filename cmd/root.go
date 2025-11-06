@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 
-	_ "pedroAPI/docs" // Import generated docs
-	"pedroAPI/handlers"
-	"pedroAPI/middleware"
-	"pedroAPI/pkg/database"
+	_ "localRental/docs" // Import generated docs
+	"localRental/handlers"
+	"localRental/middleware"
+	"localRental/pkg/database"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -34,7 +34,6 @@ func Execute() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	// Register routes - alojamentos endpoints
-	mux.HandleFunc("/admin", middleware.Authenticate(handlers.AdminHandler))
 	mux.HandleFunc("GET /alojamentos", handlers.GetAlojamentos)
 	mux.HandleFunc("GET /alojamentos/{id}", handlers.GetAlojamentoByID)
 	mux.HandleFunc("GET /alojamentos/search", handlers.SearchAlojamentos)

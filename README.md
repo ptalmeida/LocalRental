@@ -1,4 +1,4 @@
-# Pedro API - Portuguese Accommodations Data API
+# LocalRental API - Portuguese Accommodations Data API
 
 A production-ready REST API for Portuguese local accommodations (Alojamentos Locais) data, built with Go featuring PostgreSQL integration, pagination, schema validation, and OpenAPI documentation.
 
@@ -62,10 +62,10 @@ For detailed database setup instructions, see:
 
 ```bash
 # Build the API
-go build -o pedroAPI .
+go build -o localRental .
 
 # Run the server
-./pedroAPI
+./localRental
 
 # Server starts on http://localhost:8087
 ```
@@ -74,7 +74,7 @@ go build -o pedroAPI .
 ```bash
 # Using environment variable
 export DATABASE_URL="postgres://user:pass@localhost/alojamentos?sslmode=disable"
-./pedroAPI
+./localRental
 ```
 
 ## API Documentation
@@ -182,13 +182,12 @@ curl "http://localhost:8087/alojamentos/stats"
 ## Project Structure
 
 ```
-pedroAPI/
+localRental/
 ├── main.go                      # Entry point with API metadata
 ├── cmd/
 │   └── root.go                  # Server setup, database init, routing
 ├── handlers/                    # HTTP request handlers
 │   ├── alojamentos.go           # Alojamentos endpoints (4 endpoints)
-│   ├── admin.go                 # Admin handler
 │   └── response.go              # Response utilities
 ├── middleware/                  # HTTP middleware
 │   ├── database.go              # Database context injection
@@ -286,7 +285,7 @@ After adding or modifying endpoints:
 
 ```bash
 ~/go/bin/swag init
-go build -o pedroAPI .
+go build -o localRental .
 ```
 
 This regenerates the OpenAPI spec in `docs/`.
@@ -300,7 +299,7 @@ go mod download
 
 ### Build
 ```bash
-go build -o pedroAPI .
+go build -o localRental .
 ```
 
 ### Run Tests

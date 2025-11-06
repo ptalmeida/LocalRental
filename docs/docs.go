@@ -10,50 +10,12 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "email": "support@pedroapi.com"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin": {
-            "get": {
-                "security": [
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Access admin area (requires authentication)",
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Admin access",
-                "responses": {
-                    "200": {
-                        "description": "admin",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/alojamentos": {
             "get": {
                 "description": "Get a paginated list of Portuguese accommodations",
@@ -494,7 +456,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8087",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "Pedro API",
+	Title:            "LocalRental API",
 	Description:      "Portuguese accommodations (Alojamentos Locais) data API",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

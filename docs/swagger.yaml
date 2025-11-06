@@ -108,36 +108,12 @@ definitions:
     type: object
 host: localhost:8087
 info:
-  contact:
-    email: support@pedroapi.com
-    name: API Support
+  contact: {}
   description: Portuguese accommodations (Alojamentos Locais) data API
-  license:
-    name: MIT
-    url: https://opensource.org/licenses/MIT
   termsOfService: http://swagger.io/terms/
-  title: Pedro API
+  title: LocalRental API
   version: "1.0"
 paths:
-  /admin:
-    get:
-      description: Access admin area (requires authentication)
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: admin
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-      security:
-      - BasicAuth: []
-      summary: Admin access
-      tags:
-      - Admin
   /alojamentos:
     get:
       consumes:

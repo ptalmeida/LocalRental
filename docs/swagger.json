@@ -2,52 +2,14 @@
     "swagger": "2.0",
     "info": {
         "description": "Portuguese accommodations (Alojamentos Locais) data API",
-        "title": "Pedro API",
+        "title": "LocalRental API",
         "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "email": "support@pedroapi.com"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
-        },
+        "contact": {},
         "version": "1.0"
     },
     "host": "localhost:8087",
     "basePath": "/",
     "paths": {
-        "/admin": {
-            "get": {
-                "security": [
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Access admin area (requires authentication)",
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Admin access",
-                "responses": {
-                    "200": {
-                        "description": "admin",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/alojamentos": {
             "get": {
                 "description": "Get a paginated list of Portuguese accommodations",

@@ -25,11 +25,11 @@ The specification is available in multiple formats:
 ## What's Documented
 
 ### API Information
-- **Title**: Pedro API
+- **Title**: LocalRental
 - **Version**: 1.0
 - **Description**: A simple calculator API with validation
 - **License**: MIT
-- **Contact**: support@pedroapi.com
+- **Contact**: support@localrental.com
 
 ### Endpoints
 
@@ -38,9 +38,6 @@ The specification is available in multiple formats:
 - `POST /subtract` - Subtract two numbers
 - `POST /multiply` - Multiply two numbers
 - `POST /divide` - Divide two numbers
-
-#### Admin
-- `GET /admin` - Admin access (requires Basic Auth)
 
 ### Request/Response Models
 
@@ -108,7 +105,7 @@ After making changes to your code or annotations:
 
 ```bash
 ~/go/bin/swag init
-go build -o pedroAPI
+go build -o localRental
 ```
 
 This will:
@@ -175,7 +172,7 @@ func ProcessPaymentHandler(w http.ResponseWriter, r *http.Request) {
 
 ## Viewing in Swagger UI
 
-1. Start your API: `./pedroAPI`
+1. Start your API: `./localRental`
 2. Open browser: http://localhost:8087/swagger/index.html
 3. Try out endpoints with the "Try it out" button
 4. View schemas, examples, and responses

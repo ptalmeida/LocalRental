@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"pedroAPI/middleware"
-	"pedroAPI/models"
-	"pedroAPI/pkg/database"
-	pkgValidator "pedroAPI/pkg/validator"
+	"localRental/middleware"
+	"localRental/models"
+	"localRental/pkg/database"
+	pkgValidator "localRental/pkg/validator"
 )
 
 // GetAlojamentos godoc
