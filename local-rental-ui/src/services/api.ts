@@ -1,20 +1,22 @@
-import createClient from 'openapi-fetch';
-import type { paths, components } from '../types/api';
+import createClient from "openapi-fetch";
+import type { paths, components } from "../types/api";
 
 // Create typed API client
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 export const apiClient = createClient<paths>({ baseUrl: API_BASE_URL });
 
 // Export commonly used types for convenience
-export type Property = components['schemas']['models.AlojamentoResponse'];
-export type PaginatedProperties = components['schemas']['models.PaginatedResponse-models_AlojamentoResponse'];
-export type PaginationMeta = components['schemas']['models.PaginationMeta'];
-export type Stats = components['schemas']['models.StatsResponse'];
-export type DistrictStats = components['schemas']['models.DistrictStats'];
-export type MunicipalityStats = components['schemas']['models.MunicipalityStats'];
-export type TypeStats = components['schemas']['models.TypeStats'];
-export type ErrorResponse = components['schemas']['models.ErrorResponse'];
+export type Property = components["schemas"]["models.AlojamentoResponse"];
+export type PaginatedProperties =
+  components["schemas"]["models.PaginatedResponse-models_AlojamentoResponse"];
+export type PaginationMeta = components["schemas"]["models.PaginationMeta"];
+export type Stats = components["schemas"]["models.StatsResponse"];
+export type DistrictStats = components["schemas"]["models.DistrictStats"];
+export type MunicipalityStats =
+  components["schemas"]["models.MunicipalityStats"];
+export type TypeStats = components["schemas"]["models.TypeStats"];
+export type ErrorResponse = components["schemas"]["models.ErrorResponse"];
 
 // API functions with full type safety
 export const api = {
@@ -25,7 +27,7 @@ export const api = {
     sort?: string;
     order?: string;
   }) {
-    const { data, error } = await apiClient.GET('/alojamentos', {
+    const { data, error } = await apiClient.GET("/alojamentos", {
       params: { query: params },
     });
     if (error) throw error;
@@ -49,7 +51,7 @@ export const api = {
     min_lng?: number;
     max_lng?: number;
   }) {
-    const { data, error } = await apiClient.GET('/alojamentos/search', {
+    const { data, error } = await apiClient.GET("/alojamentos/search", {
       params: { query: params },
     });
     if (error) throw error;
@@ -58,7 +60,7 @@ export const api = {
 
   // Get property by ID
   async getPropertyById(id: number) {
-    const { data, error } = await apiClient.GET('/alojamentos/{id}', {
+    const { data, error } = await apiClient.GET("/alojamentos/{id}", {
       params: { path: { id } },
     });
     if (error) throw error;
@@ -67,8 +69,54 @@ export const api = {
 
   // Get statistics
   async getStats() {
-    const { data, error } = await apiClient.GET('/alojamentos/stats');
+    const { data, error } = await apiClient.GET("/alojamentos/stats");
     if (error) throw error;
     return data;
+  },
+
+  // Fetch all properties by paginating through all pages
+  async getAllProperties(
+    filters?: {
+      concelho?: string;
+      distrito?: string;
+      modalidade?: string;
+      email?: string;
+      min_capacity?: number;
+      max_capacity?: number;
+      min_lat?: number;
+      max_lat?: number;
+      min_lng?: number;
+      max_lng?: number;
+    },
+    onProgress?: (current: number, total: number) => void
+  ) {
+    const allProperties: Property[] = [];
+    const limit = 100; // Fetch in batches of 100
+    let page = 1;
+    let totalPages = 1;
+
+    while (page <= totalPages) {
+      const hasFilters =
+        filters &&
+        Object.values(filters).some((v) => v !== undefined && v !== "");
+
+      const data = hasFilters
+        ? await this.searchProperties({ ...filters, page, limit })
+        : await this.getProperties({ page, limit });
+
+      if (data?.data) {
+        allProperties.push(...data.data);
+      }
+
+      if (data?.pagination) {
+        const total = data.pagination.total || 0;
+        totalPages = Math.ceil(total / limit);
+        onProgress?.(page, totalPages);
+      }
+
+      page++;
+    }
+
+    return allProperties;
   },
 };

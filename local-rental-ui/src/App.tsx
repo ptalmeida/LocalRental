@@ -10,8 +10,10 @@ function App() {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [showStats, setShowStats] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingAll, setIsFetchingAll] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
+  const [currentFilters, setCurrentFilters] = useState<SearchFilters>({});
 
   // Load properties
   const loadProperties = useCallback(async (filters: SearchFilters = {}) => {
@@ -44,13 +46,37 @@ function App() {
   }, [loadProperties]);
 
   const handleSearch = (filters: SearchFilters) => {
+    setCurrentFilters(filters);
     loadProperties(filters);
     setSelectedProperty(null);
   };
 
   const handleSearchHere = (bounds: { min_lat: number; max_lat: number; min_lng: number; max_lng: number }) => {
-    loadProperties(bounds);
+    // Merge GPS bounds with existing filters, preserving all other filters
+    const updatedFilters = {
+      ...currentFilters,
+      ...bounds,
+    };
+    setCurrentFilters(updatedFilters);
+    loadProperties(updatedFilters);
     setSelectedProperty(null);
+  };
+
+  const handleGetAll = async () => {
+    try {
+      setIsFetchingAll(true);
+      setError(null);
+
+      const allProperties = await api.getAllProperties(currentFilters);
+
+      setProperties(allProperties);
+      setTotalCount(allProperties.length);
+    } catch (err) {
+      setError('Failed to load all properties');
+      console.error(err);
+    } finally {
+      setIsFetchingAll(false);
+    }
   };
 
   return (
@@ -86,7 +112,9 @@ function App() {
               selectedProperty={selectedProperty}
               onPropertySelect={setSelectedProperty}
               onSearch={handleSearch}
+              onGetAll={handleGetAll}
               isLoading={isLoading}
+              isFetchingAll={isFetchingAll}
               totalCount={totalCount}
             />
           </div>

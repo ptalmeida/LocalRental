@@ -7,7 +7,9 @@ interface PropertyListProps {
   selectedProperty: Property | null;
   onPropertySelect: (property: Property) => void;
   onSearch: (filters: SearchFilters) => void;
+  onGetAll?: () => void;
   isLoading: boolean;
+  isFetchingAll?: boolean;
   totalCount: number;
 }
 
@@ -31,7 +33,9 @@ export default function PropertyList({
   selectedProperty,
   onPropertySelect,
   onSearch,
+  onGetAll,
   isLoading,
+  isFetchingAll = false,
   totalCount,
 }: PropertyListProps) {
   const [filters, setFilters] = useState<SearchFilters>({});
@@ -100,13 +104,51 @@ export default function PropertyList({
             {totalCount.toLocaleString()}
           </span>
         </div>
-        <p style={{
-          fontSize: theme.typography.sizeSm,
-          color: theme.colors.textMedium,
-          marginBottom: 0,
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}>
-          {properties.length} loaded
-        </p>
+          <p style={{
+            fontSize: theme.typography.sizeSm,
+            color: theme.colors.textMedium,
+            marginBottom: 0,
+          }}>
+            {properties.length} loaded
+          </p>
+          {onGetAll && properties.length < totalCount && (
+            <button
+              onClick={onGetAll}
+              disabled={isFetchingAll}
+              style={{
+                padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+                backgroundColor: isFetchingAll ? theme.colors.grayBg : theme.colors.white,
+                color: isFetchingAll ? theme.colors.textMedium : theme.colors.navy,
+                border: `1px solid ${theme.colors.navy}`,
+                borderRadius: theme.borderRadius.sm,
+                fontSize: theme.typography.sizeXs,
+                fontWeight: theme.typography.weightBold,
+                cursor: isFetchingAll ? 'not-allowed' : 'pointer',
+                transition: theme.transitions.fast,
+                fontFamily: theme.typography.fontHeading,
+              }}
+              onMouseEnter={(e) => {
+                if (!isFetchingAll) {
+                  e.currentTarget.style.backgroundColor = theme.colors.navy;
+                  e.currentTarget.style.color = theme.colors.white;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isFetchingAll) {
+                  e.currentTarget.style.backgroundColor = theme.colors.white;
+                  e.currentTarget.style.color = theme.colors.navy;
+                }
+              }}
+            >
+              {isFetchingAll ? 'Loading...' : 'Get All'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Filters Toggle */}
