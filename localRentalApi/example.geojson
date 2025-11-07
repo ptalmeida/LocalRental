@@ -1,0 +1,97 @@
+{
+  "type": "FeatureCollection",
+  "name": "Estabelecimentos_de_Alojamento_Local",
+  "crs": {
+    "type": "name",
+    "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 1,
+        "NrRNAL": 1,
+        "Denominacao": "Figo",
+        "DataRegisto": "2014-12-03T09:47:03Z",
+        "DataAberturaPublico": "2014-12-03T00:00:00Z",
+        "Modalidade": "Apartamento",
+        "NrUtentes": 4,
+        "Email": "info@cochichosfarm.com",
+        "Endereco": "Zona R/c Cx. P.430Z R/c ",
+        "CodigoPostal": "8700-206",
+        "LOCALIDADE": "Igreja",
+        "LatLong": "37,0657410006129 ; -7,82703800016578",
+        "FiabilidadeGeo": "NaoFiavel",
+        "Freguesia": "Quelfes",
+        "Concelho": "Olhão",
+        "Distrito": "Faro",
+        "NUTSIII": "Algarve",
+        "NUTSII": "Algarve",
+        "ERT": "Região de Turismo do Algarve",
+        "SeloCleanSafe": "Não"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-7.827038000183222, 37.065741000577148]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 2,
+        "NrRNAL": 2,
+        "Denominacao": "Casa Esperança",
+        "DataRegisto": "2013-07-30T00:00:00Z",
+        "DataAberturaPublico": "2013-07-30T00:00:00Z",
+        "Modalidade": "Moradia",
+        "NrUtentes": 4,
+        "Email": "ana-kaisa_herlevi@kirkkonummi.fi",
+        "Endereco": "Zona Poço Longo C.P.551-Z  ",
+        "CodigoPostal": "8700-226",
+        "LOCALIDADE": "Poço Longo",
+        "LatLong": "37,0631040005519 ; -7,84447999958415",
+        "FiabilidadeGeo": "NaoFiavel",
+        "Freguesia": "Quelfes",
+        "Concelho": "Olhão",
+        "Distrito": "Faro",
+        "NUTSIII": "Algarve",
+        "NUTSII": "Algarve",
+        "ERT": "Região de Turismo do Algarve",
+        "SeloCleanSafe": "Não"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-7.844479999658466, 37.063104000727087]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "OBJECTID": 3,
+        "NrRNAL": 3,
+        "Denominacao": "Maria da Conceição Machado Rodrigues",
+        "DataRegisto": "2014-11-27T08:39:27Z",
+        "DataAberturaPublico": "2014-12-05T00:00:00Z",
+        "Modalidade": "Apartamento",
+        "NrUtentes": 4,
+        "Email": "mariacmachado3@gmail.com",
+        "Endereco": "Rua Álvares Botelho 27 2 ",
+        "CodigoPostal": "8800-319",
+        "LOCALIDADE": "Tavira",
+        "LatLong": "37,1282358204969 ; -7,64825084271288",
+        "FiabilidadeGeo": "NaoFiavel",
+        "Freguesia": "União das freguesias de Tavira (Santa Maria e Santiago)",
+        "Concelho": "Tavira",
+        "Distrito": "Faro",
+        "NUTSIII": "Algarve",
+        "NUTSII": "Algarve",
+        "ERT": "Região de Turismo do Algarve",
+        "SeloCleanSafe": "Não"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-7.648250842982165, 37.128235820330197]
+      }
+    }
+  ]
+}

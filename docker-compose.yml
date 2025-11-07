@@ -1,0 +1,73 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: rental-api-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: alojamentos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rental-network
+
+  # API Service
+  api:
+    build:
+      context: ./localRentalApi
+      dockerfile: Dockerfile
+    container_name: rental-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Server Configuration
+      PORT: 8087
+      HOST: 0.0.0.0
+
+      # Database Configuration
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/alojamentos?sslmode=disable
+      DB_MAX_OPEN_CONNS: 25
+      DB_MAX_IDLE_CONNS: 5
+      DB_CONN_MAX_LIFETIME: 5m
+
+      # Authentication
+      AUTH_USERNAME: ${AUTH_USERNAME:-admin}
+      AUTH_PASSWORD: ${AUTH_PASSWORD:-changeme123}
+
+      # Rate Limiting
+      RATE_LIMIT_REQUESTS_PER_SECOND: 10
+      RATE_LIMIT_BURST: 20
+
+      # Environment
+      ENV: development
+    ports:
+      - "8087:8087"
+    networks:
+      - rental-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8087/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  rental-network:
+    driver: bridge

@@ -4,12 +4,14 @@
       "Bash(go get:*)",
       "Bash(mkdir:*)",
       "Bash(go build:*)",
-      "Bash(./localRental)",
+      "Bash(./localRentalApi/localRental)",
       "Bash(curl:*)",
       "Bash(lsof:*)",
       "Bash(xargs kill -9)",
       "Bash(seq:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(find:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []

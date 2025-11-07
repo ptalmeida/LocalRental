@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+  labels:
+    app: rental-api
+data:
+  # Database connection pool settings
+  db-max-open-conns: "25"
+  db-max-idle-conns: "5"
+  db-conn-max-lifetime: "5m"
+
+  # Rate limiting settings
+  rate-limit-rps: "10"
+  rate-limit-burst: "20"

@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rental-api
+  labels:
+    app: rental-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rental-api
+  template:
+    metadata:
+      labels:
+        app: rental-api
+    spec:
+      containers:
+      - name: api
+        image: rental-api:latest  # Replace with your actual image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8087
+          name: http
+        env:
+        - name: PORT
+          value: "8087"
+        - name: HOST
+          value: "0.0.0.0"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: api-secret
+              key: database-url
+        - name: DB_MAX_OPEN_CONNS
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: db-max-open-conns
+        - name: DB_MAX_IDLE_CONNS
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: db-max-idle-conns
+        - name: DB_CONN_MAX_LIFETIME
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: db-conn-max-lifetime
+        - name: AUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: api-secret
+              key: auth-username
+        - name: AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-secret
+              key: auth-password
+        - name: RATE_LIMIT_REQUESTS_PER_SECOND
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: rate-limit-rps
+        - name: RATE_LIMIT_BURST
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: rate-limit-burst
+        - name: ENV
+          value: "production"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8087
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8087
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      restartPolicy: Always

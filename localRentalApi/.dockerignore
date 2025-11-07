@@ -1,0 +1,45 @@
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+localRental
+importer
+query
+
+# Databases
+*.db
+*.db-journal
+
+# Test files
+test_*.db
+test_*.json
+*.test
+
+# Documentation (markdown)
+*.md
+!README.md
+
+# Scripts
+*.sh
+
+# Claude
+.claude/
+
+# Logs
+*.log

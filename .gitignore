@@ -1,24 +1,16 @@
-# Binaries
-importer
-!importer/
-query
-!query/
-localRental
+# Backups
+backups/
+*.sql
 
-# Databases
-*.db
-*.db-journal
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Test files
-test_*.db
-test_*.json
