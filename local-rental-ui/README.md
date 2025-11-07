@@ -164,8 +164,8 @@ View aggregated data:
 - Total number of properties
 - Average capacity
 - Distribution by property type
-- Top 10 districts
-- Top 15 municipalities
+- All districts (sorted by count)
+- All municipalities (sorted by count)
 
 ## Browser Support
 

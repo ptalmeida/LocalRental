@@ -401,14 +401,13 @@ func GetAlojamentosStats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// By distrito (top 10)
+	// By distrito (all)
 	districtRows, err := db.Query(`
 		SELECT distrito, COUNT(*) as count
 		FROM alojamentos
 		WHERE distrito != ''
 		GROUP BY distrito
 		ORDER BY count DESC
-		LIMIT 10
 	`)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Failed to fetch district stats")
@@ -425,14 +424,13 @@ func GetAlojamentosStats(w http.ResponseWriter, r *http.Request) {
 		stats.ByDistrito = append(stats.ByDistrito, ds)
 	}
 
-	// By concelho (top 10)
+	// By concelho (all)
 	concelhoRows, err := db.Query(`
 		SELECT concelho, COUNT(*) as count
 		FROM alojamentos
 		WHERE concelho != ''
 		GROUP BY concelho
 		ORDER BY count DESC
-		LIMIT 10
 	`)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Failed to fetch municipality stats")
