@@ -454,18 +454,33 @@ export default function PropertyList({
                   {property.denominacao || 'Unnamed Property'}
                 </h3>
                 {property.nr_rnal && (
-                  <div style={{
-                    display: 'inline-block',
-                    backgroundColor: theme.colors.navy,
-                    color: theme.colors.white,
-                    padding: `2px ${theme.spacing.sm}`,
-                    borderRadius: '4px',
-                    fontSize: '10px',
-                    fontWeight: theme.typography.weightBold,
-                    marginTop: '2px',
-                  }}>
+                  <a
+                    href={`https://rnt.turismodeportugal.pt/RNT/RNAL.aspx?nr=${property.nr_rnal}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      display: 'inline-block',
+                      backgroundColor: theme.colors.navy,
+                      color: theme.colors.white,
+                      padding: `2px ${theme.spacing.sm}`,
+                      borderRadius: '4px',
+                      fontSize: '10px',
+                      fontWeight: theme.typography.weightBold,
+                      marginTop: '2px',
+                      textDecoration: 'none',
+                      cursor: 'pointer',
+                      transition: theme.transitions.fast,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = theme.colors.navyDark;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = theme.colors.navy;
+                    }}
+                  >
                     {property.nr_rnal}
-                  </div>
+                  </a>
                 )}
               </div>
 
