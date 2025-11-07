@@ -12,7 +12,8 @@
       "Bash(xargs:*)",
       "Bash(find:*)",
       "Bash(mv:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:www.ptalmeida.com)"
     ],
     "deny": [],
     "ask": []

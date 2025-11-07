@@ -23,18 +23,33 @@ export default function Map({ properties, selectedProperty, onPropertySelect }: 
       style: {
         version: 8,
         sources: {
-          'osm': {
+          'satellite': {
             type: 'raster',
-            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tiles: [
+              'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+            ],
             tileSize: 256,
-            attribution: '© OpenStreetMap contributors',
+            attribution: 'Tiles © Esri — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+          },
+          'labels': {
+            type: 'raster',
+            tiles: [
+              'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}'
+            ],
+            tileSize: 256,
+            attribution: '',
           },
         },
         layers: [
           {
-            id: 'osm',
+            id: 'satellite',
             type: 'raster',
-            source: 'osm',
+            source: 'satellite',
+          },
+          {
+            id: 'labels',
+            type: 'raster',
+            source: 'labels',
           },
         ],
       },
@@ -68,13 +83,16 @@ export default function Map({ properties, selectedProperty, onPropertySelect }: 
 
       const el = document.createElement('div');
       el.className = 'marker';
-      el.style.width = '12px';
-      el.style.height = '12px';
+      el.style.width = '16px';
+      el.style.height = '16px';
       el.style.borderRadius = '50%';
-      el.style.backgroundColor = selectedProperty?.id === property.id ? '#ef4444' : '#3b82f6';
-      el.style.border = '2px solid white';
+      el.style.backgroundColor = selectedProperty?.id === property.id ? '#ef4444' : '#0f2f7f';
+      el.style.border = '3px solid white';
       el.style.cursor = 'pointer';
-      el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+      el.style.boxShadow = selectedProperty?.id === property.id
+        ? '0 0 0 3px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(0,0,0,0.5)'
+        : '0 0 0 2px rgba(15, 47, 127, 0.3), 0 3px 8px rgba(0,0,0,0.4)';
+      el.style.transition = 'all 0.4s ease-in-out';
 
       const marker = new maplibregl.Marker({ element: el })
         .setLngLat([property.longitude, property.latitude])

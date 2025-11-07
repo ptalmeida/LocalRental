@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Property } from '../services/api';
+import { theme } from '../theme';
 
 interface PropertyListProps {
   properties: Property[];
@@ -36,6 +37,7 @@ export default function PropertyList({
   const [filters, setFilters] = useState<SearchFilters>({});
   const [showFilters, setShowFilters] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'advanced'>('basic');
+  const propertyRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   const handleFilterChange = (key: keyof SearchFilters, value: string | number) => {
     const newFilters = { ...filters, [key]: value || undefined };
@@ -48,33 +50,102 @@ export default function PropertyList({
     onSearch({});
   };
 
+  // Scroll to selected property
+  useEffect(() => {
+    if (selectedProperty && selectedProperty.id && propertyRefs.current[selectedProperty.id]) {
+      propertyRefs.current[selectedProperty.id]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [selectedProperty]);
+
   return (
-    <div className="flex flex-col h-full bg-gradient-to-b from-gray-50 to-white shadow-xl border-r border-gray-200">
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      backgroundColor: theme.colors.grayBg,
+      borderRight: `1px solid ${theme.colors.border}`,
+    }}>
       {/* Header */}
-      <div className="p-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-2xl font-bold">Properties</h2>
-          <span className="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-sm font-medium">
+      <div style={{
+        padding: theme.spacing.lg,
+        backgroundColor: theme.colors.white,
+        borderBottom: `1px solid ${theme.colors.border}`,
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: theme.spacing.xs,
+        }}>
+          <h2 style={{
+            fontFamily: theme.typography.fontHeading,
+            fontSize: theme.typography.sizeXl,
+            fontWeight: theme.typography.weightBold,
+            color: theme.colors.navy,
+            marginBottom: 0,
+          }}>
+            Properties
+          </h2>
+          <span style={{
+            padding: `${theme.spacing.xs} ${theme.spacing.md}`,
+            backgroundColor: theme.colors.navy,
+            color: theme.colors.white,
+            borderRadius: theme.borderRadius.sm,
+            fontSize: theme.typography.sizeSm,
+            fontWeight: theme.typography.weightBold,
+          }}>
             {totalCount.toLocaleString()}
           </span>
         </div>
-        <p className="text-blue-100 text-sm">{properties.length} loaded</p>
+        <p style={{
+          fontSize: theme.typography.sizeSm,
+          color: theme.colors.textMedium,
+          marginBottom: 0,
+        }}>
+          {properties.length} loaded
+        </p>
       </div>
 
       {/* Filters Toggle */}
-      <div className="px-6 py-4 bg-white border-b border-gray-200">
+      <div style={{
+        padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+        backgroundColor: theme.colors.grayBg,
+        borderBottom: `1px solid ${theme.colors.border}`,
+      }}>
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="w-full px-4 py-3 text-sm font-semibold text-blue-700 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all duration-200 flex items-center justify-between group"
+          style={{
+            width: '100%',
+            padding: `${theme.spacing.md} ${theme.spacing.lg}`,
+            fontSize: theme.typography.sizeSm,
+            fontWeight: theme.typography.weightSemiBold,
+            backgroundColor: theme.colors.white,
+            color: theme.colors.navy,
+            borderRadius: theme.borderRadius.sm,
+            border: `1px solid ${theme.colors.border}`,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            transition: theme.transitions.fast,
+          }}
         >
-          <span className="flex items-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span style={{ display: 'flex', alignItems: 'center', gap: theme.spacing.sm }}>
+            <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
             {showFilters ? 'Hide Filters' : 'Show Filters'}
           </span>
           <svg
-            className={`w-5 h-5 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}
+            style={{
+              width: '20px',
+              height: '20px',
+              transform: showFilters ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s',
+            }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -86,26 +157,28 @@ export default function PropertyList({
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="px-6 py-4 bg-gradient-to-b from-gray-50 to-white border-b border-gray-200">
+        <div className="px-6 py-4 bg-[#f8f8f8]" style={{ borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
           {/* Tabs */}
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setActiveTab('basic')}
-              className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg ${
                 activeTab === 'basic'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'bg-[#0f2f7f] text-white neumorphic'
+                  : 'bg-white hover:neumorphic-sm'
               }`}
+              style={{ border: 'none', color: activeTab === 'basic' ? 'white' : '#0f2f7f' }}
             >
               Basic
             </button>
             <button
               onClick={() => setActiveTab('advanced')}
-              className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg ${
                 activeTab === 'advanced'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'bg-[#0f2f7f] text-white neumorphic'
+                  : 'bg-white hover:neumorphic-sm'
               }`}
+              style={{ border: 'none', color: activeTab === 'advanced' ? 'white' : '#0f2f7f' }}
             >
               Advanced
             </button>
@@ -115,7 +188,7 @@ export default function PropertyList({
           {activeTab === 'basic' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                   📍 District (Distrito)
                 </label>
                 <input
@@ -123,12 +196,13 @@ export default function PropertyList({
                   placeholder="e.g., Lisboa, Porto"
                   value={filters.distrito || ''}
                   onChange={(e) => handleFilterChange('distrito', e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                   🏘️ Municipality (Concelho)
                 </label>
                 <input
@@ -136,12 +210,13 @@ export default function PropertyList({
                   placeholder="e.g., Cascais, Matosinhos"
                   value={filters.concelho || ''}
                   onChange={(e) => handleFilterChange('concelho', e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                   🏠 Type (Modalidade)
                 </label>
                 <input
@@ -149,13 +224,14 @@ export default function PropertyList({
                   placeholder="e.g., Apartamento, Moradia"
                   value={filters.modalidade || ''}
                   onChange={(e) => handleFilterChange('modalidade', e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     👥 Min Cap.
                   </label>
                   <input
@@ -163,11 +239,12 @@ export default function PropertyList({
                     placeholder="0"
                     value={filters.min_capacity || ''}
                     onChange={(e) => handleFilterChange('min_capacity', parseInt(e.target.value))}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     👥 Max Cap.
                   </label>
                   <input
@@ -175,7 +252,8 @@ export default function PropertyList({
                     placeholder="100"
                     value={filters.max_capacity || ''}
                     onChange={(e) => handleFilterChange('max_capacity', parseInt(e.target.value))}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   />
                 </div>
               </div>
@@ -186,7 +264,7 @@ export default function PropertyList({
           {activeTab === 'advanced' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                   📧 Owner Email
                 </label>
                 <input
@@ -194,13 +272,14 @@ export default function PropertyList({
                   placeholder="owner@example.com"
                   value={filters.email || ''}
                   onChange={(e) => handleFilterChange('email', e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     📐 Min Latitude
                   </label>
                   <input
@@ -209,11 +288,12 @@ export default function PropertyList({
                     placeholder="36.5"
                     value={filters.min_lat || ''}
                     onChange={(e) => handleFilterChange('min_lat', parseFloat(e.target.value))}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     📐 Max Latitude
                   </label>
                   <input
@@ -222,14 +302,15 @@ export default function PropertyList({
                     placeholder="42.5"
                     value={filters.max_lat || ''}
                     onChange={(e) => handleFilterChange('max_lat', parseFloat(e.target.value))}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     📍 Min Longitude
                   </label>
                   <input
@@ -238,11 +319,12 @@ export default function PropertyList({
                     placeholder="-9.5"
                     value={filters.min_lng || ''}
                     onChange={(e) => handleFilterChange('min_lng', parseFloat(e.target.value))}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     📍 Max Longitude
                   </label>
                   <input
@@ -251,20 +333,22 @@ export default function PropertyList({
                     placeholder="-6.0"
                     value={filters.max_lng || ''}
                     onChange={(e) => handleFilterChange('max_lng', parseFloat(e.target.value))}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     🔀 Sort By
                   </label>
                   <select
                     value={filters.sort || ''}
                     onChange={(e) => handleFilterChange('sort', e.target.value)}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   >
                     <option value="">Default</option>
                     <option value="id">ID</option>
@@ -276,13 +360,14 @@ export default function PropertyList({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                  <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'rgba(0,0,0,0.8)' }}>
                     📊 Order
                   </label>
                   <select
                     value={filters.order || ''}
                     onChange={(e) => handleFilterChange('order', e.target.value)}
-                    className="w-full px-4 py-2.5 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm rounded-lg neumorphic-inset bg-white focus:neumorphic"
+                  style={{ border: '1px solid rgba(0,0,0,0.12)', outline: 'none' }}
                   >
                     <option value="">Default</option>
                     <option value="asc">Ascending</option>
@@ -296,7 +381,8 @@ export default function PropertyList({
           {/* Clear Filters Button */}
           <button
             onClick={clearFilters}
-            className="w-full mt-4 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+            className="w-full mt-4 px-4 py-3 text-sm font-semibold bg-white rounded-lg hover:neumorphic neumorphic-sm"
+            style={{ color: '#0f2f7f', border: 'none' }}
           >
             Clear All Filters
           </button>
@@ -325,53 +411,179 @@ export default function PropertyList({
           </div>
         )}
 
-        {!isLoading && properties.map((property) => (
-          <div
-            key={property.id}
-            onClick={() => onPropertySelect(property)}
-            className={`p-5 border-b border-gray-100 cursor-pointer transition-all duration-200 ${
-              selectedProperty?.id === property.id
-                ? 'bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-l-blue-600 shadow-md'
-                : 'hover:bg-gray-50 hover:shadow-sm'
-            }`}
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h3 className="font-bold text-gray-900 text-base mb-1">
+        {!isLoading && properties.map((property) => {
+          const formatDate = (dateString?: string) => {
+            if (!dateString) return null;
+            return new Date(dateString).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            });
+          };
+
+          return (
+            <div
+              key={property.id}
+              ref={(el) => {
+                if (property.id) propertyRefs.current[property.id] = el;
+              }}
+              onClick={() => onPropertySelect(property)}
+              style={{
+                position: 'relative',
+                margin: theme.spacing.sm,
+                padding: theme.spacing.md,
+                backgroundColor: theme.colors.white,
+                borderRadius: theme.borderRadius.sm,
+                border: selectedProperty?.id === property.id
+                  ? `2px solid ${theme.colors.navy}`
+                  : `1px solid ${theme.colors.border}`,
+                cursor: 'pointer',
+                transition: theme.transitions.fast,
+              }}
+            >
+              {/* Header: Title + RNAL */}
+              <div style={{ marginBottom: theme.spacing.sm }}>
+                <h3 style={{
+                  fontFamily: theme.typography.fontHeading,
+                  fontWeight: theme.typography.weightBold,
+                  fontSize: theme.typography.sizeSm,
+                  color: theme.colors.navy,
+                  marginBottom: '2px',
+                  lineHeight: theme.typography.lineHeightTight,
+                }}>
                   {property.denominacao || 'Unnamed Property'}
                 </h3>
                 {property.nr_rnal && (
-                  <p className="text-xs text-blue-600 font-semibold mb-2">RNAL: {property.nr_rnal}</p>
+                  <div style={{
+                    display: 'inline-block',
+                    backgroundColor: theme.colors.navy,
+                    color: theme.colors.white,
+                    padding: `2px ${theme.spacing.sm}`,
+                    borderRadius: '4px',
+                    fontSize: '10px',
+                    fontWeight: theme.typography.weightBold,
+                    marginTop: '2px',
+                  }}>
+                    {property.nr_rnal}
+                  </div>
                 )}
-                <div className="space-y-1">
+              </div>
+
+              {/* Two-column grid for dense information */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: `${theme.spacing.xs} ${theme.spacing.sm}`,
+                fontSize: '10px',
+                marginBottom: theme.spacing.sm,
+              }}>
+                {/* Left column */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                   {property.modalidade && (
-                    <p className="text-xs text-gray-600 flex items-center gap-1">
-                      <span className="text-gray-400">🏠</span>
+                    <div style={{ color: theme.colors.textDark, fontWeight: theme.typography.weightSemiBold }}>
                       {property.modalidade}
-                    </p>
+                    </div>
                   )}
                   {property.concelho && (
-                    <p className="text-xs text-gray-600 flex items-center gap-1">
-                      <span className="text-gray-400">📍</span>
-                      {property.concelho}{property.distrito && `, ${property.distrito}`}
-                    </p>
+                    <div style={{ color: theme.colors.textMedium }}>
+                      {property.concelho}
+                    </div>
                   )}
+                  {property.distrito && (
+                    <div style={{ color: theme.colors.textLight }}>
+                      {property.distrito}
+                    </div>
+                  )}
+                </div>
+
+                {/* Right column */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'right' }}>
                   {property.nr_utentes && (
-                    <p className="text-xs text-gray-600 flex items-center gap-1">
-                      <span className="text-gray-400">👥</span>
-                      Capacity: {property.nr_utentes}
-                    </p>
+                    <div style={{ color: theme.colors.textDark, fontWeight: theme.typography.weightBold }}>
+                      👥 {property.nr_utentes}
+                    </div>
+                  )}
+                  {property.codigo_postal && (
+                    <div style={{ color: theme.colors.textMedium }}>
+                      {property.codigo_postal}
+                    </div>
+                  )}
+                  {property.data_registo && (
+                    <div style={{ color: theme.colors.textLight }}>
+                      {formatDate(property.data_registo)}
+                    </div>
                   )}
                 </div>
               </div>
-              {selectedProperty?.id === property.id && (
-                <div className="ml-3">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+
+              {/* Address - full width */}
+              {property.endereco && (
+                <div style={{
+                  fontSize: '10px',
+                  color: theme.colors.textMedium,
+                  marginBottom: theme.spacing.xs,
+                  lineHeight: 1.3,
+                }}>
+                  📍 {property.endereco}
+                  {property.localidade && `, ${property.localidade}`}
                 </div>
               )}
+
+              {/* Contact + Coordinates row */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingTop: theme.spacing.xs,
+                borderTop: `1px solid ${theme.colors.border}`,
+                fontSize: '9px',
+              }}>
+                {property.email ? (
+                  <a
+                    href={`mailto:${property.email}`}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      color: theme.colors.navy,
+                      textDecoration: 'none',
+                      fontWeight: theme.typography.weightSemiBold,
+                      maxWidth: '60%',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    📧 {property.email}
+                  </a>
+                ) : (
+                  <span style={{ color: theme.colors.textLight }}>No contact</span>
+                )}
+
+                {property.latitude && property.longitude && (
+                  <span style={{
+                    color: theme.colors.textLight,
+                    fontFamily: 'monospace',
+                  }}>
+                    {property.latitude.toFixed(3)}, {property.longitude.toFixed(3)}
+                  </span>
+                )}
+              </div>
+
+              {/* Selected indicator */}
+              {selectedProperty?.id === property.id && (
+                <div style={{
+                  position: 'absolute',
+                  top: theme.spacing.sm,
+                  right: theme.spacing.sm,
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: theme.colors.navy,
+                  animation: 'pulse 2s ease-in-out infinite',
+                }} />
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

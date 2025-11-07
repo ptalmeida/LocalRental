@@ -140,11 +140,14 @@ local-rental-ui/
 
 ## Map Features
 
-- **Markers**: Each property displayed as a marker on the map
+- **Satellite Imagery**: High-resolution satellite view with ESRI World Imagery
+- **Place Labels**: Overlay showing boundaries and place names
+- **Enhanced Markers**: Larger markers (16px) with glow effects for better visibility
 - **Click to Select**: Click markers to view property details
 - **Auto-fit Bounds**: Map automatically fits to show all properties
 - **Fly-to Animation**: Smooth animation when selecting properties
-- **Color Coding**: Selected property highlighted in red
+- **Color Coding**: Selected property highlighted in red with pulse effect
+- **Zoom Controls**: Navigation controls in top-right corner
 
 ## Search & Filtering
 

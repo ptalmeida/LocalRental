@@ -1,70 +1,112 @@
+import { theme } from '../theme';
+import NavLink from './NavLink';
+
 interface HeaderProps {
   onShowStats: () => void;
+  showStats?: boolean;
 }
 
-export default function Header({ onShowStats }: HeaderProps) {
+export default function Header({ onShowStats, showStats = false }: HeaderProps) {
   return (
-    <header className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 text-white shadow-xl relative overflow-hidden">
-      {/* Animated background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-          backgroundSize: '32px 32px'
-        }}></div>
-      </div>
-
-      <div className="relative px-8 py-6">
-        <div className="flex items-center justify-between">
-          {/* Left side - Project branding */}
-          <div className="flex items-center gap-6">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="bg-white/20 backdrop-blur p-2.5 rounded-xl">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold tracking-tight">
-                    Local Rental Properties
-                  </h1>
-                  <p className="text-blue-100 text-sm font-medium">
-                    Portuguese Accommodation Registry
-                  </p>
-                </div>
-              </div>
-            </div>
+    <>
+      <style>{`
+        .nav-link:hover .nav-link-underline {
+          width: 90%;
+          opacity: 1;
+          left: 5%;
+        }
+        .icon-link:hover .icon-svg {
+          transform: rotate(90deg);
+        }
+      `}</style>
+      <header
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: theme.layout.headerHeight,
+          backgroundColor: theme.colors.navy,
+          zIndex: 10,
+        }}
+      >
+        <div
+          style={{
+            maxWidth: theme.layout.maxWidth,
+            margin: '0 auto',
+            padding: `0 ${theme.spacing.xl}`,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'nowrap',
+          }}
+        >
+          {/* Logo/Brand */}
+          <div
+            style={{
+              fontFamily: theme.typography.fontHeading,
+              fontWeight: theme.typography.weightBold,
+              color: theme.colors.textOnNavy,
+            }}
+          >
+            LocalRental.
           </div>
 
-          {/* Right side - Actions */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onShowStats}
-              className="px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 group"
-            >
-              <svg className="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              View Statistics
-            </button>
-
+          {/* Navigation Links */}
+          <nav style={{ display: 'flex', alignItems: 'center' }}>
+            <NavLink onClick={() => showStats && onShowStats()} active={!showStats}>
+              Map
+            </NavLink>
+            <div style={{ marginLeft: theme.spacing.md }}>
+              <NavLink onClick={() => !showStats && onShowStats()} active={showStats}>
+                Statistics
+              </NavLink>
+            </div>
+            <div style={{ marginLeft: theme.spacing.md }}>
+              <NavLink href="https://www.ptalmeida.com" external>
+                ptalmeida.com
+              </NavLink>
+            </div>
             <a
-              href="https://www.ptalmeida.com"
+              href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 group"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '30px',
+                width: '30px',
+                margin: `0 ${theme.spacing.sm}`,
+                padding: 0,
+                color: theme.colors.textOnNavy,
+                transition: theme.transitions.fast,
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+              }}
+              className="icon-link"
             >
-              <span>Pedro Almeida</span>
-              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              <svg
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  transition: `transform ${theme.transitions.fast}`,
+                }}
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                className="icon-svg"
+              >
+                <path d="M10.9,2.1c-4.6,0.5-8.3,4.2-8.8,8.7c-0.5,4.7,2.2,8.9,6.3,10.5C8.7,21.4,9,21.2,9,20.8v-1.6c0,0-0.4,0.1-0.9,0.1 c-1.4,0-2-1.2-2.1-1.9c-0.1-0.4-0.3-0.7-0.6-1C5.1,16.3,5,16.3,5,16.2C5,16,5.3,16,5.4,16c0.6,0,1.1,0.7,1.3,1c0.5,0.8,1.1,1,1.4,1 c0.4,0,0.7-0.1,0.9-0.2c0.1-0.7,0.4-1.4,1-1.8c-2.3-0.5-4-1.8-4-4c0-1.1,0.5-2.2,1.2-3C7.1,8.8,7,8.3,7,7.6C7,7.2,7,6.6,7.3,6 c0,0,1.4,0,2.8,1.3C10.6,7.1,11.3,7,12,7s1.4,0.1,2,0.3C15.3,6,16.8,6,16.8,6C17,6.6,17,7.2,17,7.6c0,0.8-0.1,1.2-0.2,1.4 c0.7,0.8,1.2,1.8,1.2,3c0,2.2-1.7,3.5-4,4c0.6,0.5,1,1.4,1,2.3v2.6c0,0.3,0.3,0.6,0.7,0.5c3.7-1.5,6.3-5.1,6.3-9.3 C22,6.1,16.9,1.4,10.9,2.1z"></path>
               </svg>
             </a>
-          </div>
+          </nav>
         </div>
-      </div>
-
-      {/* Bottom gradient border */}
-      <div className="h-1 bg-gradient-to-r from-blue-400 via-cyan-400 to-indigo-400"></div>
-    </header>
+      </header>
+      {/* Spacer to prevent content from going under fixed header */}
+      <div style={{ height: theme.layout.headerHeight }} />
+    </>
   );
 }
