@@ -1,18 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import type { Property } from '../services/api';
+import { theme } from '../theme';
 
 interface MapProps {
   properties: Property[];
   selectedProperty: Property | null;
   onPropertySelect: (property: Property | null) => void;
+  onSearchHere?: (bounds: { min_lat: number; max_lat: number; min_lng: number; max_lng: number }) => void;
 }
 
-export default function Map({ properties, selectedProperty, onPropertySelect }: MapProps) {
+export default function Map({ properties, selectedProperty, onPropertySelect, onSearchHere }: MapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const [mapLoaded, setMapLoaded] = useState(false);
+
+  const handleSearchHere = () => {
+    if (!map.current || !onSearchHere) return;
+
+    const bounds = map.current.getBounds();
+    onSearchHere({
+      min_lat: bounds.getSouth(),
+      max_lat: bounds.getNorth(),
+      min_lng: bounds.getWest(),
+      max_lng: bounds.getEast(),
+    });
+  };
 
   // Initialize map
   useEffect(() => {
@@ -92,7 +106,8 @@ export default function Map({ properties, selectedProperty, onPropertySelect }: 
       el.style.boxShadow = selectedProperty?.id === property.id
         ? '0 0 0 3px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(0,0,0,0.5)'
         : '0 0 0 2px rgba(15, 47, 127, 0.3), 0 3px 8px rgba(0,0,0,0.4)';
-      el.style.transition = 'all 0.4s ease-in-out';
+      // Only transition visual properties, not position
+      el.style.transition = 'background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out';
 
       const marker = new maplibregl.Marker({ element: el })
         .setLngLat([property.longitude, property.latitude])
@@ -104,17 +119,6 @@ export default function Map({ properties, selectedProperty, onPropertySelect }: 
 
       markersRef.current.push(marker);
     });
-
-    // Fit bounds to show all properties
-    if (properties.length > 0) {
-      const bounds = new maplibregl.LngLatBounds();
-      properties.forEach((property) => {
-        if (property.latitude && property.longitude) {
-          bounds.extend([property.longitude, property.latitude]);
-        }
-      });
-      map.current.fitBounds(bounds, { padding: 50, maxZoom: 12 });
-    }
   }, [properties, selectedProperty, mapLoaded, onPropertySelect]);
 
   // Fly to selected property
@@ -128,5 +132,49 @@ export default function Map({ properties, selectedProperty, onPropertySelect }: 
     });
   }, [selectedProperty]);
 
-  return <div ref={mapContainer} className="w-full h-full" />;
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
+
+      {/* Search Here Button */}
+      {onSearchHere && (
+        <button
+          onClick={handleSearchHere}
+          style={{
+            position: 'absolute',
+            top: theme.spacing.md,
+            left: theme.spacing.md,
+            padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
+            backgroundColor: theme.colors.white,
+            color: theme.colors.navy,
+            border: `2px solid ${theme.colors.navy}`,
+            borderRadius: theme.borderRadius.sm,
+            fontFamily: theme.typography.fontHeading,
+            fontSize: theme.typography.sizeSm,
+            fontWeight: theme.typography.weightBold,
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            transition: theme.transitions.fast,
+            display: 'flex',
+            alignItems: 'center',
+            gap: theme.spacing.sm,
+            zIndex: 1,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = theme.colors.navy;
+            e.currentTarget.style.color = theme.colors.white;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = theme.colors.white;
+            e.currentTarget.style.color = theme.colors.navy;
+          }}
+        >
+          <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          Search Here
+        </button>
+      )}
+    </div>
+  );
 }

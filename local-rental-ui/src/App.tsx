@@ -48,6 +48,11 @@ function App() {
     setSelectedProperty(null);
   };
 
+  const handleSearchHere = (bounds: { min_lat: number; max_lat: number; min_lng: number; max_lng: number }) => {
+    loadProperties(bounds);
+    setSelectedProperty(null);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
@@ -59,9 +64,23 @@ function App() {
         <StatsPanel onClose={() => setShowStats(false)} />
       ) : (
         // Map view with sidebar
-        <div className="flex flex-1 overflow-hidden">
+        <div style={{
+          display: 'flex',
+          flex: 1,
+          overflow: 'hidden',
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+        }}>
           {/* Sidebar - Property List */}
-          <div className="w-96 h-full flex-shrink-0">
+          <div style={{
+            width: '384px',
+            minWidth: '384px',
+            maxWidth: '384px',
+            height: '100%',
+            flexShrink: 0,
+            overflow: 'hidden',
+          }}>
             <PropertyList
               properties={properties}
               selectedProperty={selectedProperty}
@@ -73,7 +92,13 @@ function App() {
           </div>
 
           {/* Main Content - Map */}
-          <div className="flex-1 relative bg-gray-100">
+          <div style={{
+            flex: 1,
+            position: 'relative',
+            backgroundColor: '#f3f4f6',
+            overflow: 'hidden',
+            minWidth: 0,
+          }}>
             {/* Error Message */}
             {error && (
               <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10 bg-red-50 border-2 border-red-300 text-red-800 px-6 py-4 rounded-2xl shadow-2xl max-w-md animate-bounce">
@@ -95,6 +120,7 @@ function App() {
                 properties={properties}
                 selectedProperty={selectedProperty}
                 onPropertySelect={setSelectedProperty}
+                onSearchHere={handleSearchHere}
               />
             )}
           </div>

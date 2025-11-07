@@ -389,18 +389,54 @@ export default function PropertyList({
         </div>
       )}
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center p-12">
-          <div className="relative">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200"></div>
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent absolute top-0 left-0"></div>
+      {/* Property List Container - with fixed dimensions */}
+      <div style={{
+        flex: 1,
+        position: 'relative',
+        minHeight: 0,
+        overflow: 'hidden',
+      }}>
+        {/* Loading State Overlay */}
+        {isLoading && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: theme.colors.grayBg,
+            zIndex: 10,
+          }}>
+            <div style={{ position: 'relative' }}>
+              <div className="animate-spin" style={{
+                borderRadius: '9999px',
+                height: '48px',
+                width: '48px',
+                border: '4px solid #dbeafe',
+              }}></div>
+              <div className="animate-spin" style={{
+                borderRadius: '9999px',
+                height: '48px',
+                width: '48px',
+                border: '4px solid #2563eb',
+                borderTopColor: 'transparent',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+              }}></div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Property List */}
-      <div className="flex-1 overflow-y-auto">
+        {/* Scrollable Property List */}
+        <div style={{
+          height: '100%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+        }}>
         {!isLoading && properties.length === 0 && (
           <div className="p-12 text-center">
             <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -599,6 +635,7 @@ export default function PropertyList({
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );
